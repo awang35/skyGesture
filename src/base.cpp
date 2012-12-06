@@ -313,13 +313,6 @@ void display (void) {
 	glVertex3f( 0.0f, 0.0f, -100.0f );
 	glVertex3f( 0.0f, 0.0f, 100.0f );            
 	glEnd();
-	// juan
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glPointSize(4.0);
-	glVertexPointer(4,GL_FLOAT, sizeof(Point), &points[0].x);
-	glDrawArrays(GL_POINTS,0,points.size());
-	glDisableClientState(GL_VERTEX_ARRAY);
-	// juan
 	glPopMatrix();
 
 	//glutSolidTeapot( 20.0f );
@@ -478,7 +471,7 @@ int main( int argc, char* args[] ){
 
 		//
 		//while(file.good())
-		while(point_count < 10000)
+		while(point_count < 153828) // for some reason 153828 is the max num of points ...
 		{
 			getline(file,temp);
 			//cout << temp << endl;
