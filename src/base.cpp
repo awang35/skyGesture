@@ -42,11 +42,16 @@ const int height = 600;
 
 //Lidar Variables
 int point_count = 0; // how many points
-vector<double> xcor;
-vector<double> ycor;
-vector<double> zcor;
+vector<double> xcor, ycor, zcor;
 vector<int> classification; // holds classification of each point whether it is a point on a tree or the ground	
+double xsum=0, ysum=0, zsum=0,xavg = 0, yavg = 0, zavg=0, xmin=0,ymin=0,zmin=0;
 GLdouble* g_vertex_LIDAR;
+struct Point
+{
+	float x,y,z;
+	unsigned r,g,b,a;
+};
+vector<Point> points;
 
 //Font Style
 GLvoid *font_style = GLUT_BITMAP_TIMES_ROMAN_10;
@@ -274,10 +279,11 @@ void drawSky(void){
 
 
 void display (void) {
+	/*
 	keyOperations();
 	specialKeyOperations();
-//	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red
-	glClear(GL_COLOR_BUFFER_BIT); //Clear the color buffer (more buffers later on)
+	//	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the color buffer (more buffers later on)
 	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations
 	//gluLookAt(0, 0, -10, 0, 0, -1, 0, 1, 0);
 	glTranslatef(xLocation, 0.0f, 0.0f); // Push everything 5 units back into the scene, otherwise we won't see the primitive
@@ -287,7 +293,7 @@ void display (void) {
 	//glRotatef(yRotationAngle, 0.0f, 1.0f, 0.0f); // Rotate our object around the y axis
 	glRotatef(xRotationAngle, 1.0f, 0.0f, 0.0f);
 	glRotatef(yRotationAngle, 0.0f, 1.0f, 0.0f);
-	
+
 	//glColor3f(red,green,blue);
 	glColor3f( 0.4f, 0.7f, 2.2f );
 	glPushMatrix();
@@ -307,6 +313,13 @@ void display (void) {
 	glVertex3f( 0.0f, 0.0f, -100.0f );
 	glVertex3f( 0.0f, 0.0f, 100.0f );            
 	glEnd();
+	// juan
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glPointSize(4.0);
+	glVertexPointer(4,GL_FLOAT, sizeof(Point), &points[0].x);
+	glDrawArrays(GL_POINTS,0,points.size());
+	glDisableClientState(GL_VERTEX_ARRAY);
+	// juan
 	glPopMatrix();
 
 	//glutSolidTeapot( 20.0f );
@@ -315,7 +328,29 @@ void display (void) {
 	//renderPrimitive(); // Render the primitive
 	//
 	glutSwapBuffers(); // Flush the OpenGL buffers to the window
+	*/
+	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-50, 50, -50, 50, -1, 1);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // draw
+    glColor3ub( 255, 255, 255 );
+    glEnableClientState( GL_VERTEX_ARRAY );
+    glEnableClientState( GL_COLOR_ARRAY );
+    glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
+    glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
+    glPointSize( 3.0 );
+    glDrawArrays( GL_POINTS, 0, points.size() );
+    glDisableClientState( GL_VERTEX_ARRAY );
+    glDisableClientState( GL_COLOR_ARRAY );
+
+    glFlush();
+    glutSwapBuffers();
 }
 void reshape(int w, int h){
 	// Prevent a divide by zero, when window is too short
@@ -424,23 +459,26 @@ int main( int argc, char* args[] ){
 	string temp; // to hold and devide the lines from the file
 	char *tempArr;
 	char *pch; // for spliting the 
-	// x, y, & z coordinates will be read in from a file and stored in a vector
-
+	vector <double> coor;
 	cout << "Trying to open file" << endl;
 	ifstream file;
-	//file.open("C:/Users/Juan/Downloads/lidar.csv"); // need to make this general
+	/*
 	cout << "Name of your .csv file: ";
 	cin >> filename;
 	filename += ".csv";
 	cout << "Filename: " << filename << endl;
+	*/
+	filename = "C:/Users/Juan/Downloads/lidar.csv"; // for testing
 	file.open(filename);
 	if(file.is_open())
 	{
 		cout << "File is open" << endl;
 		getline(file,temp); // get the header out of the way
 
-		//while(point_count <5)
-		while(file.good())
+
+		//
+		//while(file.good())
+		while(point_count < 10000)
 		{
 			getline(file,temp);
 			//cout << temp << endl;
@@ -456,12 +494,24 @@ int main( int argc, char* args[] ){
 				{
 				case 0:
 					xcor.push_back(atof(pch));
+					coor.push_back(xcor.back());
+					xsum+=xcor.back();
+					if(xmin < xcor.back())
+						xmin = xcor.back();
 					break;
 				case 1:
 					ycor.push_back(atof(pch));
+					coor.push_back(ycor.back());
+					ysum+=ycor.back();
+					if(ymin < ycor.back())
+						ymin = ycor.back();
 					break;
 				case 2:
 					zcor.push_back(atof(pch));
+					coor.push_back(zcor.back());
+					zsum+=zcor.back();
+					if(zmin < zcor.back())
+						zmin = zcor.back();
 					break;
 				case 3:
 					classification.push_back(atoi(pch));
@@ -474,34 +524,26 @@ int main( int argc, char* args[] ){
 			}
 			point_count++;
 		}
-
 		cout << "Read in " << point_count << " points" << endl;
 		file.close();
 		cout << "File has been closed" << endl;
-		/*
-		// print out the points
-		cout << "X-coor\tY-coor\t\tZ-coor\tClass" << endl;
-		for(int i=0; i<classification.size(); i++)
+		cout << "xsum:" << xsum << " ysum:" << ysum << " zsum:" << zsum << endl;
+		xavg = xsum/point_count; yavg = ysum/point_count; zavg = zsum/point_count;
+		cout << "xavg:" << xavg << " yavg:" << yavg << " zavg:" << zavg << endl;
+		cout << "xmin:" << xmin << " ymin:"<< ymin << " zmin:" << zmin << endl;
+		for(int i=0; i<point_count; i++)
 		{
-		cout << xcor[i] << '\t' << ycor[i] << '\t' << zcor[i] << '\t' << classification[i] << endl;
+			Point pt;
+			pt.x = xcor[i]-xmin;
+			pt.y = ycor[i]-ymin;
+			pt.z = zcor[i]-zmin;
+			pt.r = pt.g = pt.b = pt.a =255;
+			points.push_back(pt);
 		}
-		*/
 	}
 	else
 		cout << "Unable to open file" << endl;
-
-	g_vertex_LIDAR = new GLdouble[point_count*3];
-	int counter = 0;
-	for(int k =0; k<point_count*3-3;k+=3){
-		cout<<"Loop is at: " << k << "counter is at: "<<counter<<endl;
-		cout<<xcor[counter]<<","<<ycor[counter]<<","<<zcor[counter]<<endl;
-		g_vertex_LIDAR[k] =xcor[counter] ;
-		g_vertex_LIDAR[k+1] = ycor[counter];
-		g_vertex_LIDAR[k+1] = zcor[counter];
-		counter++;
-
-	}
-
+	
 	cout << "Type in 'glut' to start using GLUT Library or 'glfw' to use GLFW Library"<< endl;
 	do{
 		cout << ">>";
