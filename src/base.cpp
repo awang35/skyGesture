@@ -111,14 +111,14 @@ void specialKeyOperations(void){
 
 		if (xLocation < -3.0f) ;
 		else
-			xLocation -= 0.0005f; // Move up along our xLocation
+			xLocation -= 0.05f; // Move up along our xLocation
 
 	}
 	if(keySpecialStates[GLUT_KEY_RIGHT]){
 		//cout<< "Right is press."<< endl;
 		if (xLocation > 3.0f) ;
 		else
-			xLocation += 0.0005f; // Move up along our yLocation
+			xLocation += 0.05f; // Move up along our yLocation
 
 
 	}
@@ -126,14 +126,14 @@ void specialKeyOperations(void){
 
 		if (yLocation > 3.0f) ;
 		else
-			yLocation += 0.0005f; // Move up along our yLocation
+			yLocation += 0.05f; // Move up along our yLocation
 
 
 	}
 	if(keySpecialStates[GLUT_KEY_DOWN]){
 		if (yLocation < -3.0f) ;
 		else
-			yLocation -= 0.0005f; // Move up along our yLocation
+			yLocation -= 0.05f; // Move up along our yLocation
 	}
 
 
@@ -279,7 +279,7 @@ void drawSky(void){
 
 
 void display (void) {
-	/*
+	
 	keyOperations();
 	specialKeyOperations();
 	//	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red
@@ -297,7 +297,7 @@ void display (void) {
 	//glColor3f(red,green,blue);
 	glColor3f( 0.4f, 0.7f, 2.2f );
 	glPushMatrix();
-	glutSolidTeapot(20.0f);
+	//glutSolidTeapot(20.0f);
 	glPopMatrix();
 	//glPushMatrix();
 	//drawSky();
@@ -313,6 +313,22 @@ void display (void) {
 	glVertex3f( 0.0f, 0.0f, -100.0f );
 	glVertex3f( 0.0f, 0.0f, 100.0f );            
 	glEnd();
+	glBegin(GL_POINTS);
+	GLfloat xc, yc, zc;
+	glPointSize(2.0);
+	for(long int i=0; i<point_count; i++)
+	{
+		xc = xcor[i] - xmin;
+		yc = ycor[i] - ymin;
+		zc = zcor[i] - zmin;
+		if(classification[i] == 1) // tree
+			glColor3f(0.0f,0.8f,0.0f);
+		else
+			glColor3f(0.647059f, 0.164706f, 0.164706f); // trying to get brown for the ground
+
+		glVertex3f(xc, yc, zc);
+	}
+	glEnd();
 	glPopMatrix();
 
 	//glutSolidTeapot( 20.0f );
@@ -321,7 +337,7 @@ void display (void) {
 	//renderPrimitive(); // Render the primitive
 	//
 	glutSwapBuffers(); // Flush the OpenGL buffers to the window
-	*/
+	/*
 	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
@@ -344,6 +360,7 @@ void display (void) {
 
     glFlush();
     glutSwapBuffers();
+	*/
 }
 void reshape(int w, int h){
 	// Prevent a divide by zero, when window is too short
