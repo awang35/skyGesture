@@ -111,14 +111,14 @@ void specialKeyOperations(void){
 
 		if (xLocation < -3.0f) ;
 		else
-			xLocation -= 0.05f; // Move up along our xLocation
+			xLocation -= 0.1f; // Move up along our xLocation
 
 	}
 	if(keySpecialStates[GLUT_KEY_RIGHT]){
 		//cout<< "Right is press."<< endl;
 		if (xLocation > 3.0f) ;
 		else
-			xLocation += 0.05f; // Move up along our yLocation
+			xLocation += 0.1f; // Move up along our yLocation
 
 
 	}
@@ -318,15 +318,15 @@ void display (void) {
 	glPointSize(2.0);
 	for(long int i=0; i<point_count; i++)
 	{
-		xc = xcor[i] - xmin;
-		yc = ycor[i] - ymin;
-		zc = zcor[i] - zmin;
+		xc = xcor[i] - xmin + 50;
+		yc = ycor[i] - ymin + 50;
+		zc = zcor[i] - zmin + 50;
 		if(classification[i] == 1) // tree
 			glColor3f(0.0f,0.8f,0.0f);
 		else
 			glColor3f(0.647059f, 0.164706f, 0.164706f); // trying to get brown for the ground
 
-		glVertex3f(xc, yc, zc);
+		glVertex3f(xc, zc, yc); // for some reason this is the right cordination 
 	}
 	glEnd();
 	glPopMatrix();
@@ -337,30 +337,6 @@ void display (void) {
 	//renderPrimitive(); // Render the primitive
 	//
 	glutSwapBuffers(); // Flush the OpenGL buffers to the window
-	/*
-	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-50, 50, -50, 50, -1, 1);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // draw
-    glColor3ub( 255, 255, 255 );
-    glEnableClientState( GL_VERTEX_ARRAY );
-    glEnableClientState( GL_COLOR_ARRAY );
-    glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
-    glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
-    glPointSize( 3.0 );
-    glDrawArrays( GL_POINTS, 0, points.size() );
-    glDisableClientState( GL_VERTEX_ARRAY );
-    glDisableClientState( GL_COLOR_ARRAY );
-
-    glFlush();
-    glutSwapBuffers();
-	*/
 }
 void reshape(int w, int h){
 	// Prevent a divide by zero, when window is too short
@@ -470,15 +446,15 @@ int main( int argc, char* args[] ){
 	char *tempArr;
 	char *pch; // for spliting the 
 	vector <double> coor;
-	cout << "Trying to open file" << endl;
 	ifstream file;
-	/*
+	
 	cout << "Name of your .csv file: ";
 	cin >> filename;
 	filename += ".csv";
 	cout << "Filename: " << filename << endl;
-	*/
-	filename = "C:/Users/Juan/Downloads/lidar.csv"; // for testing
+	
+	//filename = "C:/Users/Juan/Downloads/lidar.csv"; // for testing
+	cout << "Trying to open file: "<< filename << endl;
 	file.open(filename);
 	if(file.is_open())
 	{
