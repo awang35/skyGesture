@@ -439,6 +439,7 @@ int main( int argc, char* args[] ){
 	argsHold = *args;
 	string input, buffer, filename;
 	ofstream myfile;
+	cout << "Engr180 - Fall 2012\nAdrian Wang, James Le, Juan Pedraza\n-----------------------------------" << endl;
 	cout << "Welcome to skyGesture Application.\nThis program requires a .cvs file.\nPlease note that it has to be in the same directory as this executable.\n"<<endl;
 
 	short col = 0; // Which column am i in max 4: x, y, z, classification
@@ -530,22 +531,22 @@ int main( int argc, char* args[] ){
 	else
 		cout << "Unable to open file" << endl;
 	
-	cout << "Type in 'glut' to start using GLUT Library or 'glfw' to use GLFW Library"<< endl;
-	do{
-		cout << ">>";
-		getline(cin, input);
-		if(input.compare("glut")==0){
+	//cout << "Type in 'glut' to start using GLUT Library or 'glfw' to use GLFW Library"<< endl;
+	//do{
+	//	cout << ">>";
+	//	getline(cin, input);
+	//	if(input.compare("glut")==0){
 
 			setupWindow(argc,args);
-		}
-		if(input.compare("glfw")==0){
-			Draw *glfwWindow = new Draw();
-			glfwWindow->draw(Draw::test);
+	//	}
+	//	if(input.compare("glfw")==0){
+	//		Draw *glfwWindow = new Draw();
+	//		glfwWindow->draw(Draw::test);
 
-			//glfwWindow->drawLIDAR(&g_vertex_LIDAR);
-			glfwTerminate();
-		}
-	} while(input.compare("quit") != 0);
+	//		glfwWindow->drawLIDAR(&g_vertex_LIDAR);
+	//		glfwTerminate();
+	//	}
+	//} while(input.compare("quit") != 0);
 	delete g_vertex_LIDAR;
 	return 0;    
 }
